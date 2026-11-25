@@ -1,20 +1,30 @@
-
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   ShieldCheck,
   LayoutDashboard,
   Users,
   History,
+  KeyRound,
+  Settings,
   LogOut,
 } from "lucide-react";
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
+
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/usuarios", label: "Usuários", icon: Users },
+    { href: "/dashboard/atividades", label: "Atividades", icon: History },
+    { href: "/dashboard/sessoes", label: "Sessões", icon: KeyRound },
+    { href: "/dashboard/configuracoes", label: "Configurações", icon: Settings },
+  ];
 
   async function handleLogout() {
     try {
@@ -51,30 +61,26 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 text-sm font-medium text-indigo-600"
-          >
-            <LayoutDashboard size={17} />
-            Dashboard
-          </Link>
+        <nav className="hidden items-center gap-6 md:flex">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
 
-          <Link
-            href="/dashboard/usuarios"
-            className="flex items-center gap-2 text-sm text-gray-500 transition hover:text-indigo-600"
-          >
-            <Users size={17} />
-            Usuários
-          </Link>
-
-          <Link
-            href="/dashboard/atividades"
-            className="flex items-center gap-2 text-sm text-gray-500 transition hover:text-indigo-600"
-          >
-            <History size={17} />
-            Atividades
-          </Link>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2 text-sm transition ${
+                  isActive
+                    ? "font-medium text-indigo-600"
+                    : "text-gray-500 hover:text-indigo-600"
+                }`}
+              >
+                <Icon size={17} />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center">

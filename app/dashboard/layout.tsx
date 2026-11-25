@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AuthService } from "@/app/services/auth.service";
 
+export const instant = false;
+
 export default async function DashboardLayout({
   children,
 }: {

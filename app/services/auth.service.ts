@@ -153,4 +153,81 @@ export class AuthService {
       message: "Logout realizado com sucesso.",
     };
   }
+  static async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error("Usuário não encontrado.");
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.passwordHash
+    );
+
+    if (!isPasswordValid) {
+      throw new Error("A senha atual está incorreta.");
+    }
+
+    if (newPassword.length < 6) {
+      throw new Error("A nova senha deve ter pelo menos 6 caracteres.");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: hashedPassword },
+    });
+  }
+  static async listSessions() {
+    return prisma.session.findMany({
+      orderBy: { id: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async revokeSessionById(sessionId: number) {
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      include: { user: true },
+    });
+
+    if (!session) {
+      throw new Error("Sessão não encontrada.");
+    }
+
+    if (session.revokedAt) {
+      throw new Error("Esta sessão já foi revogada.");
+    }
+
+    const updated = await prisma.session.update({
+      where: { id: sessionId },
+      data: { revokedAt: new Date() },
+    });
+
+    await AccessLogService.create({
+      userId: session.userId,
+      email: session.user.email,
+      action: "LOGOUT",
+      status: "SUCCESS",
+    });
+
+    return updated;
+  }
 }

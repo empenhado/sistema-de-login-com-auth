@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { AccessLogService } from "./access-log.service";
+import { Prisma } from "@/generated/prisma/client";
+
+export interface ListUsersParams {
+  search?: string;
+  page?: number;
+  limit?: number;
+}
 
 export class UserService {
   // Buscar todos os usuários
@@ -87,5 +94,62 @@ export class UserService {
     });
 
     return user;
+  }
+  static async listUsers({ search = "", page = 1, limit = 10 }: ListUsersParams) {
+    const validPage = Math.max(1, page);
+    const validLimit = Math.min(50, Math.max(1, limit));
+    const skip = (validPage - 1) * validLimit;
+
+    const where: Prisma.UserWhereInput = search.trim()
+      ? {
+          OR: [
+            { name: { contains: search.trim(), mode: "insensitive" } },
+            { email: { contains: search.trim(), mode: "insensitive" } },
+          ],
+        }
+      : {};
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        skip,
+        take: validLimit,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        },
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return {
+      users,
+      total,
+      page: validPage,
+      totalPages: Math.ceil(total / validLimit),
+    };
+  }
+
+  static async getUserById(id: number) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        _count: {
+          select: {
+            sessions: true,
+            accessLogs: true,
+          },
+        },
+      },
+    });
   }
 }

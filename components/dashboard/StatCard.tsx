@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 interface StatCardProps {
   title: string;
   value: string | number;
-  description: string;
+  description?: string;
   icon: ReactNode;
   iconColor: string;
 }
@@ -18,7 +18,6 @@ export default function StatCard({
 }: StatCardProps) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-gray-500">
           {title}
@@ -33,10 +32,11 @@ export default function StatCard({
         {value}
       </h2>
 
-      <p className="mt-1 text-xs text-gray-500">
-        {description}
-      </p>
-
+      {description && (
+        <p className="mt-1 text-xs text-gray-500">
+          {description}
+        </p>
+      )}
     </div>
   );
 }

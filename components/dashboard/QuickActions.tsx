@@ -1,6 +1,11 @@
 
 import Link from "next/link";
-import { Users, History, Settings, ArrowRight } from "lucide-react";
+import {
+  Users,
+  History,
+  Settings,
+  ArrowRight,
+} from "lucide-react";
 
 const actions = [
   {

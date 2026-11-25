@@ -42,11 +42,10 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
             <StatCard
               title="Total de usuários"
               value="—"
-              description="Aguardando dados do banco"
+              description="Usuários cadastrados"
               icon={<Users size={21} className="text-indigo-600" />}
               iconColor="bg-indigo-50"
             />
@@ -54,7 +53,7 @@ export default function DashboardPage() {
             <StatCard
               title="Acessos realizados"
               value="—"
-              description="Aguardando registros de acesso"
+              description="Registros de autenticação"
               icon={<Activity size={21} className="text-blue-600" />}
               iconColor="bg-blue-50"
             />
@@ -62,7 +61,7 @@ export default function DashboardPage() {
             <StatCard
               title="Acessos bem-sucedidos"
               value="—"
-              description="Aguardando dados de autenticação"
+              description="Autenticações concluídas"
               icon={<UserCheck size={21} className="text-green-600" />}
               iconColor="bg-green-50"
             />
@@ -70,11 +69,10 @@ export default function DashboardPage() {
             <StatCard
               title="Segurança"
               value="—"
-              description="Indicadores ainda não disponíveis"
+              description="Status do sistema"
               icon={<ShieldCheck size={21} className="text-purple-600" />}
               iconColor="bg-purple-50"
             />
-
           </div>
         </section>
 

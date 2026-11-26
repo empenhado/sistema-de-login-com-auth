@@ -1,4 +1,3 @@
-
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AuthService } from "@/app/services/auth.service";
@@ -24,7 +23,7 @@ export default async function DashboardLayout({
   }
 
   if (user.role !== "ADMIN") {
-    redirect("/login");
+    redirect("/perfil");
   }
 
   return <>{children}</>;

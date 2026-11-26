@@ -38,7 +38,11 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      if (data.user?.role === "ADMIN") {
+        router.push("/dashboard");
+      } else {
+        router.push("/perfil");
+      }
       router.refresh();
     } catch {
       setMessage("Erro ao conectar com o servidor. Tente novamente.");
